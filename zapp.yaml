@@ -1,0 +1,10 @@
+name: zOS-Benefit-Batch-Processor
+version: 1.0.0
+propertyGroups:
+  - name: cobol-copybooks
+    language: cobol
+    libraries:
+      - name: syslib
+        type: local
+        locations:
+          - "copybooks"

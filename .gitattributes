@@ -1,0 +1,4 @@
+*.cbl text eol=lf
+*.cpy text eol=lf
+*.jcl text eol=lf
+*.txt text eol=lf

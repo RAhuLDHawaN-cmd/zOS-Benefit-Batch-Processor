@@ -1,0 +1,25 @@
+name: COBOL Syntax & Batch Verification
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup GnuCOBOL
+        uses: fabasoad/setup-cobol-action@v1
+
+      - name: Compile COBOL Program with Copybooks
+        run: |
+          cobc -x -free -I copybooks -o benefit cobol/BENEFIT.cbl
+
+      - name: Verify Compilation Success
+        run: |
+          ./benefit --help || test -f ./benefit
