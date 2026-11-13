@@ -1,4 +1,4 @@
-# z/OS Citizen Benefit Batch Processor
+# z/OS Benefit Batch Processor
 
 ![COBOL Build](https://github.com/<your-username>/zOS-Benefit-Batch-Processor/actions/workflows/build.yml/badge.svg)
 ![Platform](https://img.shields.io/badge/Platform-IBM%20z%2FOS-blue)
