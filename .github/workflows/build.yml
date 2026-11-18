@@ -18,8 +18,8 @@ jobs:
 
       - name: Compile COBOL Program with Copybooks
         run: |
-          cobc -x -free -I copybooks -o benefit cobol/BENEFIT.cbl
+          cobc -x -I copybooks -o benefit cobol/BENEFIT.cbl
 
       - name: Verify Compilation Success
         run: |
-          ./benefit --help || test -f ./benefit
+          test -x ./benefit
