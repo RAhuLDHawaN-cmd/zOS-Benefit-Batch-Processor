@@ -1,4 +1,4 @@
-IDENTIFICATION DIVISION.
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. BENEFIT.
        AUTHOR. RAHUL DHAWAN.
 
@@ -37,9 +37,9 @@ IDENTIFICATION DIVISION.
            05 OUT-TYPE               PIC X(04).
            05 FILLER                 PIC X(03) VALUE ' | '.
            05 OUT-DECISION           PIC X(10).
-           05 FILLER                 PIC X(03) VALUE ' | $'.
+           05 FILLER                 PIC X(04) VALUE ' | $'.
            05 OUT-PAYOUT             PIC ZZ,ZZ9.99.
-           05 FILLER                 PIC X(42) VALUE SPACES.
+           05 FILLER                 PIC X(41) VALUE SPACES.
 
        PROCEDURE DIVISION.
        0000-MAIN.
