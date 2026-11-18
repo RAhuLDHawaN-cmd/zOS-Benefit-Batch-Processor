@@ -100,3 +100,43 @@ The output dataset name is set on the `OUTDD` DD statement in `jcl/RUNBEN.jcl`. 
 - `data/sample_input.txt` — sample fixed-width input records
 - `jcl/RUNBEN.jcl` — sort and run job
 - `jcl/ALLOCATE.jcl` — dataset allocation job
+
+
+
+
+
+What this project does
+Think of it as a small benefits office workflow:
+1. It receives a file of citizen claims.
+2. It sorts the claims and keeps active citizens.
+3. It checks each claim against the income rule.
+4. It produces a report showing the decisions.
+The COBOL program does the decision-making. The JCL files tell the mainframe how to prepare and run the program.
+The files
+File	In plain terms
+data/sample_input.txt	A small example of the citizen claims being processed. It contains four 50-character records.
+copybooks/CLAIMREC.cpy	The form that describes each record: where the citizen ID, claim type, income, and status appear.
+cobol/BENEFIT.cbl	The program that reads claims and decides whether each one is approved or ineligible.
+jcl/ALLOCATE.jcl	One-time setup instructions that created the mainframe datasets, which act like named file containers.
+jcl/RUNBEN.jcl	The instructions to sort the input, run BENEFIT, and save the report.
+README.md	A plain-language reference for the input format and output.
+zapp.yaml	Zowe tooling configuration, including where the copybook is located for development.
+
+
+You also created a COMPILE JCL member on the mainframe. It compiled the COBOL source and put the runnable program in Z69036.LOADLIB.
+What’s in each citizen record
+Each record has a citizen ID, a claim type, an annual income, and a status. For example, A means active and I means inactive. The income is stored as digits without a decimal point: 003200000 means $32,000.00. Extra spaces fill the record to 50 characters.
+The decision rules
+- The JCL sorts claims by citizen ID and passes only active (A) records to the COBOL program.
+- COBOL approves an active claim if the income is below $45,000.00.
+- An approved claim receives a $1,450.00 payout.
+- Other claims that reach COBOL are marked ineligible, with no payout.
+Since the JCL filters out inactive citizens first, inactive claims aren’t counted in the current report.
+What happened in your successful run
+The sample file had four citizens. SORT removed the one inactive record, so COBOL read three:
+- 2 approved
+- 1 ineligible
+- 3 total read
+The detailed report is in Z69036.BENEFIT.RPT2600.OUT. The totals appeared separately in the STEP02:SYSOUT job output.
+
+One detail for future runs: the successful mainframe JCL used RPT2600.OUT because the original output name had a catalog conflict. The local jcl/RUNBEN.jcl still names REPORT.OUT, so update that line if you want the local JCL to match the version that ran successfully.
