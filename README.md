@@ -18,7 +18,7 @@ Each 50-byte record has this layout:
 
 For example, `100402EI01003200000A` represents citizen `100402`, claim type `EI01`, income `$32,000.00`, and active status. The record is padded with 30 spaces to 50 bytes.
 
-The sample input contains four citizens:
+The sample input contains ten citizens:
 
 | Citizen ID | Claim type | Annual income | Status | Result in current run |
 | --- | --- | ---: | --- | --- |
@@ -26,8 +26,14 @@ The sample input contains four citizens:
 | 100105 | CPP2 | $58,000.00 | Active | Ineligible (income threshold) |
 | 100890 | EI01 | $21,500.00 | Inactive | Excluded by SORT |
 | 100215 | EI01 | $41,000.00 | Active | Approved |
+| 100020 | CPP2 | $28,500.00 | Active | Approved |
+| 100335 | EI01 | $45,000.00 | Active | Ineligible (threshold is strictly below $45,000) |
+| 100777 | CPP2 | $44,999.99 | Active | Approved |
+| 100601 | EI01 | $36,000.00 | Inactive | Excluded by SORT |
+| 100990 | CPP2 | $12,500.00 | Active | Approved |
+| 100050 | EI01 | $55,000.00 | Active | Ineligible (income threshold) |
 
-`RUNBEN` sorts records by citizen ID in ascending order and includes only records with `A` in byte 20. Therefore, the COBOL program reads three of the four sample records. To process inactive claims too, remove the `INCLUDE COND` statement from the SORT input; COBOL will then count inactive claims as ineligible.
+`RUNBEN` sorts records by citizen ID in ascending order and includes only records with `A` in byte 20. Therefore, the COBOL program reads eight of the ten sample records. To process inactive claims too, remove the `INCLUDE COND` statement from the SORT input; COBOL will then count inactive claims as ineligible.
 
 ## Processing and output
 
@@ -35,7 +41,15 @@ The sample input contains four citizens:
 
 The report dataset is allocated as fixed-width records (`RECFM=FB`, `LRECL=80`). It contains a heading, a separator, and one detail row per record read. The total read, approved, and rejected counts are written to the `STEP02` SYSOUT spool, not to the report dataset.
 
-In the successful run for user `Z69036`, the report dataset was `Z69036.BENEFIT.RPT2600.OUT`. Its summary was:
+With the current ten-record sample, the expected summary is:
+
+```text
+TOTAL READ:     00008
+TOTAL APPROVED: 00005
+TOTAL REJECTED: 00003
+```
+
+The earlier successful run for user `Z69036` used the original four-record sample. Its report dataset was `Z69036.BENEFIT.RPT2600.OUT`, and its summary was:
 
 ```text
 TOTAL READ:     00003
