@@ -67,6 +67,21 @@ The report details were:
 
 The output dataset name is set on the `OUTDD` DD statement in `jcl/RUNBEN.jcl`. The checked-in JCL currently specifies `&SYSUID..BENEFIT.REPORT.OUT`; the successful mainframe run used `&SYSUID..BENEFIT.RPT2600.OUT` to avoid a catalog name conflict.
 
+## End-to-end workflow in Zowe Explorer
+
+On z/OS, a **dataset** is a stored file or library. A partitioned dataset (PDS) works like a folder, and each **member** is a named file inside it. A sequential dataset is one file without members. In Zowe Explorer, **Data Sets** shows this stored material; **Jobs** shows work submitted to run and its spool output.
+
+Follow the flow below to run the project:
+
+1. **Allocate the mainframe datasets.** Submit `jcl/ALLOCATE.jcl` as a job. The `ALLOCATE` job creates the source, copybook, JCL, input, and load libraries under your user ID. `CC 0000` means allocation completed successfully.
+2. **Put the source files into dataset members.** Upload `cobol/BENEFIT.cbl` to member `BENEFIT` in `Z69036.BENEFIT.COBOL`, and `copybooks/CLAIMREC.cpy` to member `CLAIMREC` in `Z69036.BENEFIT.COPY`. Upload `jcl/RUNBEN.jcl` to member `RUNBEN` in `Z69036.BENEFIT.JCL`. The raw input is a sequential dataset, so it contains records directly rather than members; copy `data/sample_input.txt` into `Z69036.BENEFIT.RAW.INPUT`.
+3. **Create the compile instructions.** In Zowe Explorer, use **Create New Member** on `Z69036.BENEFIT.JCL` to create member `COMPILE`, then put the compile JCL in that member. This creates a JCL file inside the existing library.
+4. **Compile the COBOL source.** Right-click the `COMPILE` member and choose **Submit Job**. z/OS runs the compiler and linker, reading `BENEFIT` and `CLAIMREC`, then places the runnable program named `BENEFIT` in `Z69036.LOADLIB`. Check the job under **Jobs**; `CC 0000` indicates the compile job succeeded.
+5. **Run the batch job.** Right-click the `RUNBEN` member and choose **Submit Job**. That job runs SORT on the raw input, then runs `BENEFIT` from `LOADLIB` on the records that passed the filter.
+6. **Read the results.** The detailed report is the dataset named on the `OUTDD` DD statement in `RUNBEN`. The totals appear in the `STEP02:SYSOUT` spool file under the run job in **Jobs**. With the current ten-record sample, expect 8 read, 5 approved, and 3 rejected.
+
+Each time you choose **Submit Job**, Zowe sends the JCL to z/OS. z/OS assigns a job ID; use that job in the **Jobs** view to check its completion status and open its output.
+
 ## Project files
 
 - `cobol/BENEFIT.cbl` — COBOL batch program
